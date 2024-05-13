@@ -72,7 +72,8 @@ async function run() {
                 }
             }
             catch {
-                res.status(500).send("Server error!");
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
             }
 
 
@@ -86,10 +87,14 @@ async function run() {
                 if (result.acknowledged === true) {
                     res.status(201).send("Recomendation Added Successfully!");
                 }
+                else {
+                    res.send("No Inserted")
+                }
             }
 
             catch {
-                res.status(500).send("Server error");
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
             }
         })
 
@@ -103,7 +108,8 @@ async function run() {
                 res.send(finalResult);
             }
             catch {
-                res.status(500).send("Server error!");
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
             }
         })
         app.get("/sevenQueries", async (req, res) => {
@@ -113,7 +119,8 @@ async function run() {
                 res.send(finalResult);
             }
             catch {
-                res.status(500).send("Server error!");
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
             }
         })
 

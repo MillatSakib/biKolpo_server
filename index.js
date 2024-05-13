@@ -131,6 +131,19 @@ async function run() {
                 res.status(500).json({ error: error.message });
             }
         })
+
+        app.get("/myQueries/:email", async (req, res) => {
+            try {
+                const email = req.params.email;
+                const result = queriesCollection.find({ email: email });
+                const finalResult = await result.toArray();
+                res.send(finalResult);
+            }
+            catch {
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
+            }
+        })
         app.get("/sevenQueries", async (req, res) => {
             try {
                 const result = queriesCollection.find().limit(7);

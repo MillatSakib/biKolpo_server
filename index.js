@@ -80,10 +80,13 @@ async function run() {
         })
 
 
-        app.post("/addRecomendation", async (req, res) => {
+        app.post("/addRecomendation/:id", async (req, res) => {
             try {
+                const id = req.params.id;
                 const data = req.body;
                 const result = await recomendationCollection.insertOne(data);
+                const abc = await queriesCollection.updateOne({ _id: new ObjectId(id) }, { $inc: { recomendationCount: 1 } });
+
                 if (result.acknowledged === true) {
                     res.status(201).send("Recomendation Added Successfully!");
                 }
@@ -102,7 +105,6 @@ async function run() {
         app.post("/queryDetails/:id", async (req, res) => {
             try {
                 const id = req.params.id;
-                // console.log(id);
                 const result = queriesCollection.find({ _id: new ObjectId(id) });
                 const finalResult = await result.toArray();
                 res.send(finalResult);

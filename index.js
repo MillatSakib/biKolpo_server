@@ -159,6 +159,20 @@ async function run() {
         })
 
 
+        app.get("/recomendationForMe/:email", async (req, res) => {
+            try {
+                const email = req.params.email;
+                const result = recomendationCollection.find({ quryUserEmail: email });
+                const finalResult = await result.toArray();
+                res.send(finalResult);
+            }
+            catch {
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
+            }
+        })
+
+
         app.get("/updateQuery/:id", async (req, res) => {
             try {
                 const id = req.params.id;

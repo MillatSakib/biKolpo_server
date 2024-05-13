@@ -99,6 +99,23 @@ async function run() {
         })
 
 
+        app.post("/queryDetails/:id", async (req, res) => {
+            try {
+                const id = req.params.id;
+                // console.log(id);
+                const result = queriesCollection.find({ _id: new ObjectId(id) });
+                const finalResult = await result.toArray();
+                res.send(finalResult);
+
+            }
+
+            catch {
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
+            }
+        })
+
+
 
 
         app.get("/allQeuries", async (req, res) => {

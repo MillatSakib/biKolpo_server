@@ -145,6 +145,19 @@ async function run() {
             }
         })
 
+        app.get("/myRecomendetion/:email", async (req, res) => {
+            try {
+                const email = req.params.email;
+                const result = recomendationCollection.find({ recommernderEmail: email });
+                const finalResult = await result.toArray();
+                res.send(finalResult);
+            }
+            catch {
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
+            }
+        })
+
 
         app.get("/updateQuery/:id", async (req, res) => {
             try {
@@ -183,6 +196,30 @@ async function run() {
                 res.status(500).json({ error: error.message });
             }
 
+        })
+
+        app.delete("/myAddedSpot/:id", async (req, res) => {
+            try {
+                const deleteStatus = await queriesCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+                res.send(deleteStatus)
+            }
+            catch {
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
+            }
+        })
+        app.delete("/myRecomendation/:id", async (req, res) => {
+            try {
+                const getId = await recomendationCollection.findOne({ _id: new ObjectId(req.params.id) });
+                const postId = getId.postId;
+                await queriesCollection.updateOne({ _id: new ObjectId(postId) }, { $inc: { recomendationCount: -1 } })
+                const deleteStatus = await recomendationCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+                res.send(deleteStatus)
+            }
+            catch {
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
+            }
         })
 
 

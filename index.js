@@ -72,11 +72,24 @@ async function run() {
                 }
             }
             catch {
-                res.send("Database connection error!");
+                res.status(500).send("Server error!");
             }
 
 
         })
+
+        app.get("/allQeuries", async (req, res) => {
+            try {
+                const result = queriesCollection.find();
+                const finalResult = await result.toArray();
+                res.send(finalResult);
+            }
+            catch {
+                res.status(500).send("Server error!");
+            }
+        })
+
+
 
 
 

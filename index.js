@@ -15,10 +15,10 @@ require('dotenv').config()
 // }))
 // app.use(express.json());
 
-// app.get('/', (req, res) => {
-//     res.send("Thanks for reach out our biKolpo Server");
+app.get('/', (req, res) => {
+    res.send("Thanks for reach out our biKolpo Server");
 
-// })
+})
 app.use(cors())
 app.use(bodyParser.json());
 
@@ -81,6 +81,16 @@ async function run() {
         app.get("/allQeuries", async (req, res) => {
             try {
                 const result = queriesCollection.find();
+                const finalResult = await result.toArray();
+                res.send(finalResult);
+            }
+            catch {
+                res.status(500).send("Server error!");
+            }
+        })
+        app.get("/sevenQueries", async (req, res) => {
+            try {
+                const result = queriesCollection.find().limit(6);
                 const finalResult = await result.toArray();
                 res.send(finalResult);
             }

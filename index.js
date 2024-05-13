@@ -78,6 +78,24 @@ async function run() {
 
         })
 
+
+        app.post("/addRecomendation", async (req, res) => {
+            try {
+                const data = req.body;
+                const result = await recomendationCollection.insertOne(data);
+                if (result.acknowledged === true) {
+                    res.status(201).send("Recomendation Added Successfully!");
+                }
+            }
+
+            catch {
+                res.status(500).send("Server error");
+            }
+        })
+
+
+
+
         app.get("/allQeuries", async (req, res) => {
             try {
                 const result = queriesCollection.find();
@@ -90,7 +108,7 @@ async function run() {
         })
         app.get("/sevenQueries", async (req, res) => {
             try {
-                const result = queriesCollection.find().limit(6);
+                const result = queriesCollection.find().limit(7);
                 const finalResult = await result.toArray();
                 res.send(finalResult);
             }

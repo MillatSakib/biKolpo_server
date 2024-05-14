@@ -173,6 +173,19 @@ async function run() {
             }
         })
 
+        app.get("/allRecomendation/:id", async (req, res) => {
+            try {
+                const id = req.params.id;
+                const result = recomendationCollection.find({ postId: id });
+                const finalResult = await result.toArray();
+                res.send(finalResult);
+            }
+            catch {
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
+            }
+        })
+
 
         app.get("/recomendationForMe/:email", async (req, res) => {
             try {

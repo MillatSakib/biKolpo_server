@@ -150,7 +150,7 @@ async function run() {
         app.get("/myQueries/:email", async (req, res) => {
             try {
                 const email = req.params.email;
-                const result = queriesCollection.find({ email: email });
+                const result = queriesCollection.find({ email: email }).sort({ currentDateTime: -1 });
                 const finalResult = await result.toArray();
                 res.send(finalResult);
             }

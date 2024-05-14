@@ -132,6 +132,21 @@ async function run() {
             }
         })
 
+        app.get("/allQueries/:ProductName", async (req, res) => {
+            try {
+                const searchTxt = req.params.ProductName;
+                const searchWord = searchTxt.toLowerCase().split(/\s+/);
+                const regex = new RegExp(searchWord.join('|'), 'i');
+                const result = await queriesCollection.find({ ProductName: { $regex: regex } }).toArray();
+
+                res.send(result);
+            } catch (error) {
+                console.error("Error:", error);
+                res.status(500).json({ error: "Something went wrong (Code:500)" });
+            }
+        })
+
+
         app.get("/myQueries/:email", async (req, res) => {
             try {
                 const email = req.params.email;

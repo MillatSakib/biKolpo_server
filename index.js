@@ -122,7 +122,7 @@ async function run() {
 
         app.get("/allQeuries", async (req, res) => {
             try {
-                const result = queriesCollection.find();
+                const result = queriesCollection.find().sort({ currentDateTime: -1 });
                 const finalResult = await result.toArray();
                 res.send(finalResult);
             }

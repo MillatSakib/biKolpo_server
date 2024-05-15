@@ -9,23 +9,18 @@ require('dotenv').config()
 
 //middleware
 
-// app.use(cors({
-//     origin: ["http://localhost:5173/", "http://localhost:5174/"],
-//     credentials: true,
-// }))
-// app.use(express.json());
+app.use(cors({
+    origin: ["http://localhost:5173", "http://localhost:5174", "https://bikolpo.netlify.app"],
+    credentials: true,
+}));
 
 app.get('/', (req, res) => {
     res.send("Thanks for reach out our biKolpo Server");
 
 })
-app.use(cors())
+// app.use(cors())
 app.use(bodyParser.json());
-
-
-
-
-
+app.use(cookieParser());
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -40,6 +35,14 @@ const client = new MongoClient(uri, {
     }
 });
 
+
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+};
+
+
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
@@ -50,16 +53,22 @@ async function run() {
         //auth related api
 
 
-        // app.post('/jwt', async (req, res) => {
-        //     const user = req.body;
-        //     const token = jwt.sign(user, process.env.Access_Token_Secret, { expiresIn: '1h' })
-        //     res.cookie('token', token, {
-        //         httpOnly: true,
-        //         secure: false,  //If it is https then you have to set securre : ture
-        //         sameSite: 'none'
-        //     }).send({ success: true });
+        app.post('/jwt', async (req, res) => {
+            const user = req.body;
+            const token = jwt.sign({ user: user.email }, process.env.Access_Token_Secret, { expiresIn: '24h' });
+            res.cookie('token', token, cookieOptions).send({ success: true });
+        })
 
-        // })
+
+        app.post("/logout", async (req, res) => {
+            const user = req.body;
+            console.log("logging out", user);
+            res
+                .clearCookie("token", { ...cookieOptions, maxAge: 0 })
+                .send({ success: true });
+        });
+
+
         app.post("/addQueries", async (req, res) => {
             try {
                 const data = req.body;

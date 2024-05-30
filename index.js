@@ -3,11 +3,12 @@ const cors = require('cors');
 const app = express();
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const bodyParser = require('body-parser');      //add body parser for hassel free to conver the req body into josn
 require('dotenv').config()
 
 //middleware
+
 
 app.use(cors({
     origin: ["http://localhost:5173", "http://localhost:5174", "https://bikolpo.netlify.app"],
@@ -72,6 +73,7 @@ async function run() {
         app.post("/addQueries", async (req, res) => {
             try {
                 const data = req.body;
+
                 const result = await queriesCollection.insertOne(data)
                 if (result.acknowledged === true) {
                     res.status(201).send("Query Added Successfully!")
@@ -132,6 +134,18 @@ async function run() {
         app.get("/allQeuries", async (req, res) => {
             try {
                 const result = queriesCollection.find().sort({ currentDateTime: -1 });
+                const finalResult = await result.toArray();
+                res.send(finalResult);
+            }
+            catch {
+                const error = new Error('Something went wrong (Code:500)');
+                res.status(500).json({ error: error.message });
+            }
+        })
+        app.get("/noRecomendation", async (req, res) => {
+            try {
+                const specificEmailToSkip = req.query.email;
+                const result = queriesCollection.find({ recomendationCount: 0, email: { $not: { $eq: specificEmailToSkip } } }).limit(10);
                 const finalResult = await result.toArray();
                 res.send(finalResult);
             }
